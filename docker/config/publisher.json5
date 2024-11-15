@@ -1,0 +1,32 @@
+{
+  /// The node's mode (router, peer or client)
+  mode: "peer",
+
+  metadata: {
+    name: "Publisher on USV",
+    location: "USV 1",
+  },
+
+  /// Which endpoints to connect to. E.g. tcp/localhost:7447.
+  /// By configuring the endpoints, it is possible to tell zenoh which router/peer to connect to at startup.
+  connect: {
+    /// timeout waiting for all endpoints connected (0: no retry, -1: infinite timeout)
+    timeout_ms: { router: -1, peer: -1, client: -1 },
+
+    /// The list of endpoints to connect to.
+    /// Accepts a single list (e.g. endpoints: ["tcp/10.10.10.10:7447", "tcp/11.11.11.11:7447"])
+    /// or different lists for router, peer and client (e.g. endpoints: { router: ["tcp/10.10.10.10:7447"], peer: ["tcp/11.11.11.11:7447"] }).
+  //  endpoints: [
+  //    "tcp/11.11.11.1:7447"
+  //  ],
+  },
+  scouting: {
+    multicast: {
+      enabled: true,
+      address: "224.0.0.224:7446",
+      interface: "auto",
+      autoconnect: { router: [], peer: ["router", "peer"] }, 
+      listen: true,
+    },
+  },
+}

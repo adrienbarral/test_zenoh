@@ -1,0 +1,36 @@
+{
+
+  /// The node's mode (router, peer or client)
+  mode: "peer",
+
+  /// The node's metadata (name, location, DNS name, etc.) Arbitrary JSON data not interpreted by zenoh and available in admin space @/<zid>/router, @/<zid>/peer or @/<zid>/client
+  metadata: {
+    name: "Subscriber on MCMPF",
+    location: "MSM PF",
+  },
+
+  /// Which endpoints to connect to. E.g. tcp/localhost:7447.
+  /// By configuring the endpoints, it is possible to tell zenoh which router/peer to connect to at startup.
+  connect: {
+    /// timeout waiting for all endpoints connected (0: no retry, -1: infinite timeout)
+    timeout_ms: { router: -1, peer: -1, client: -1 },
+
+    /// The list of endpoints to connect to.
+    /// Accepts a single list (e.g. endpoints: ["tcp/10.10.10.10:7447", "tcp/11.11.11.11:7447"])
+    /// or different lists for router, peer and client (e.g. endpoints: { router: ["tcp/10.10.10.10:7447"], peer: ["tcp/11.11.11.11:7447"] }).
+    //endpoints: {
+    //  client: ["tcp/12.12.12.1:7447"]
+    //},
+    /// exit from application, if timeout exceed
+    exit_on_failure: { router: false, peer: false, client: true },
+    /// connect establishing retry configuration
+    retry: {
+      /// initial wait timeout until next connect try
+      period_init_ms: 1000,
+      /// maximum wait timeout until next connect try
+      period_max_ms: 4000,
+      /// increase factor for the next timeout until nexti connect try
+      period_increase_factor: 2,
+    },
+  },
+}

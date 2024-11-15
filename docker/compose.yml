@@ -1,0 +1,48 @@
+
+services: 
+  publisher: 
+    image: localhost/test_zenoh
+    volumes:
+      - ./config:/config
+    environment:
+      - RUST_LOG=info
+      - ZENOH_CONFIG=/config/publisher.json5
+    entrypoint: "/bin/publisher -s 10 -e 100"
+    networks:
+      net1:
+        ipv4_address: 11.11.11.3
+  service2:
+    image: eclipse/zenoh
+    command: ["-c", "/config/config_red_usv.json5"]
+    volumes:
+      - ./config:/config
+    networks:
+      net1: 
+        ipv4_address: 11.11.11.2
+      net2: 
+        ipv4_address: 12.12.12.1
+  subscriber: 
+    image: localhost/test_zenoh
+    volumes:
+      - ./config:/config
+    environment:
+      - RUST_LOG=info
+      - ZENOH_CONFIG=/config/subscriber.json5
+    entrypoint: "/bin/subscriber -s 10 -e 100"
+    cap_add:
+      - NET_RAW
+    networks:
+      net2:
+        ipv4_address: 12.12.12.4
+
+networks:
+  net1:
+    ipam:
+      driver: default
+      config:
+        - subnet: 11.11.11.0/24
+  net2:
+    ipam:
+      driver: default
+      config:
+        - subnet: 12.12.12.0/24
